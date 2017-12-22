@@ -2,7 +2,7 @@
 """
 Created on Fri Dec 22 16:07:50 2017
 
-@author: zabbanl
+@author: ####
 """
 #4TO DO: bc splitting, random wallet generation, cheking unique ID of wallets, create comunication between two wallets in transaction, proof-of-work (PoW)
 class blockchain(object):
