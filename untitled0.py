@@ -27,7 +27,7 @@ class blockchain(object):
         total = np.random.randint(0,100,1) 
         pubkey = np.random.randint(0,total,1)
         prikey = total-pubkey
-        keys = [int(total),int(pubkey),int(prikey)]
+        keys = {'total': int(total), 'pubkey': int(pubkey), 'prikey': int(prikey)}
         return keys
         
         
@@ -35,11 +35,11 @@ class blockchain(object):
       
         def check(a, b):
             for item in a:
-                if item[1] == b:
-                    return item[0]
+                if item['pubkey'] == b:
+                    return item['total']
                 else:
                     pass
-            d = item[0]
+            d = item['total']
             return d
             
         # New bitcoin created        
@@ -50,7 +50,7 @@ class blockchain(object):
         # Check that newowner_pk is a valid pk (pk's are unique)
         flat_list_pk = []
         for w in blockchain_DB:
-            flat_list_pk.append(w[1])
+            flat_list_pk.append(w['pubkey'])
         if flat_list_pk.count(newowner_pk) == 1:
             
             # Check that claimedprikey is the correct prikey
@@ -103,11 +103,13 @@ blockchain_DB.append(keys1)
 w2 = wallet()
 keys2 = w2.keys
 # Check of keys uniquness
-keycheck = [keys1[0]-keys2[0],keys1[1]-keys2[1],keys1[2]-keys2[2]]
+keycheck = [keys1['total']-keys2['total'],
+            keys1['pubkey']-keys2['pubkey'],
+            keys1['prikey']-keys2['prikey']]
 if keycheck.count(0) >= 1:
     print 'There was a collsion, new wallet regenerated'
     w2 = wallet()
-    keys2 = w2.request_key(100)
+    keys2 = w2.keys
 else:
     pass
 blockchain_DB.append(keys2)
@@ -116,7 +118,7 @@ print blockchain_DB
 
 # Begining of the transaction from Wallet 1 to Wallet 2
 print 'Assign a bitcoin to Wallet 1'
-bc.append(keys1[1])
+bc.append(keys1['pubkey'])
 print bc
 print 'Transaction from Wallet 1 to Wallet 2'
 IDowner= bc[-1]
@@ -143,7 +145,6 @@ print coins
 # clash same values in wallets
 # TO DO: random wallet generation, cheking unique ID of wallets, create comunication between two wallets in transaction, proof-of-work (PoW)
 # coin
-
 
 
 
