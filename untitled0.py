@@ -16,9 +16,10 @@ Created on Thu Sep 14 23:49:46 2017
 
 class blockchain(object):
     
-    
-  def genkey(self, a):
-        total = np.random.randint(0,a,1)
+   #moved the setting of a =  100 here as it should be a characteristic of the genkey funtion,
+   #decoupled from the wallet object
+  def genkey(self):
+        total = np.random.randint(0,100,1)
         pubkey = np.random.randint(0,total,1)
         prikey = total-pubkey
         keys = [int(total),int(pubkey),int(prikey)]
@@ -59,7 +60,12 @@ class blockchain(object):
                 return coins
                 
             else:
-                print 'Your transaction was rejected and unfortunately the reason cannot be disclosed. A refund has been issued and should appear in your card statement within a few days. We apologize for the inconvenience. Actually you just gave us a wrong private key you little piece of mothermary...'
+                print ''' 
+                Your transaction was rejected and unfortunately the reason cannot be disclosed. 
+                A refund has been issued and should appear in your card statement within a few days. 
+                We apologize for the inconvenience. 
+                Actually you just gave us a wrong private key you little piece of mothermary...
+                '''
                 coins = [bc]
                 return coins
                 
@@ -72,13 +78,11 @@ class blockchain(object):
       
 class wallet(object):
   
-  
-  def request_key(self, a):
-      b = blockchain()
-      keys = b.genkey(a)
-      return keys
+    #the wallet is already initialized with its keys, as it makes more sense
+    def __init__(self):
+        self.keys = blockchain().genkey()
       
-  def sign(self, guess, pubkey):
+    def sign(self, guess, pubkey):
         if guess + pubkey  ==  total:
             answer = 'yes'
             return answer
@@ -95,10 +99,10 @@ import numpy as np
 blockchain_DB = []
 bc  =  [10]
 w1 = wallet()
-keys1 = w1.request_key(100)
+keys1 = w1.keys
 blockchain_DB.append(keys1)
 w2 = wallet()
-keys2 = w2.request_key(100)
+keys2 = w2.keys
 # Check of keys uniquness
 keycheck = [keys1[0]-keys2[0],keys1[1]-keys2[1],keys1[2]-keys2[2]]
 if keycheck.count(0) >= 1:
@@ -140,9 +144,6 @@ print coins
 # Introduce hash method for chekcing right key
 # clash same values in wallets
 # TO DO: random wallet generation, cheking unique ID of wallets, create comunication between two wallets in transaction, proof-of-work (PoW)
-
-
-
 
 
 
