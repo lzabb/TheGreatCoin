@@ -16,17 +16,22 @@ Created on Thu Sep 14 23:49:46 2017
 
 class blockchain(object):
     
-   #moved the setting of a =  100 here as it should be a characteristic of the genkey funtion,
+   
+    def __init__(self):
+        self.blockchain_DB = []
+        self.bc  =  [10]
+    
+    #moved the setting of a =  100 here as it should be a characteristic of the genkey funtion,
    #decoupled from the wallet object
-  def genkey(self):
-        total = np.random.randint(0,100,1)
+    def genkey(self):
+        total = np.random.randint(0,100,1) 
         pubkey = np.random.randint(0,total,1)
         prikey = total-pubkey
         keys = [int(total),int(pubkey),int(prikey)]
         return keys
         
         
-  def PoW(self, claimedprikey, bc, blockchain_DB, newowner_pk, howmuchbitcoins):
+    def PoW(self, claimedprikey, bc, blockchain_DB, newowner_pk, howmuchbitcoins):
       
         def check(a, b):
             for item in a:
@@ -87,9 +92,11 @@ class wallet(object):
 import numpy as np
 
 
+b = blockchain()
+
 # Generating keys/wallets so that each key is unique
-blockchain_DB = []
-bc  =  [10]
+blockchain_DB = b.blockchain_DB
+bc = b.bc
 w1 = wallet()
 keys1 = w1.keys
 blockchain_DB.append(keys1)
@@ -123,7 +130,6 @@ print 'Input the private key for'
 print IDowner
 Claimedprikey=raw_input(">")
 claimedprikey=int(Claimedprikey)
-b = blockchain()
 coins = b.PoW(claimedprikey, bc, blockchain_DB, newowner_pk, howmuchbitcoins)
 print 'Coins in the economy: [0] = amount, [-1] = pk_owner '
 print coins
@@ -137,7 +143,6 @@ print coins
 # clash same values in wallets
 # TO DO: random wallet generation, cheking unique ID of wallets, create comunication between two wallets in transaction, proof-of-work (PoW)
 # coin
-
 
 
 
