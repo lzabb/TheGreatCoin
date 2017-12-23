@@ -38,10 +38,7 @@ class blockchain(object):
             return d
             
         # New bitcoin created        
-        bc1 = []
-        for i in bc: 
-            bc1.append(i)
-        bc[0] = 10-howmuchbitcoins
+        bc1 = list(bc)
         bc1[0] = howmuchbitcoins
         IDowner = bc1[-1] # pubkey=IDwallet
         
@@ -55,6 +52,7 @@ class blockchain(object):
             totalowner = check(blockchain_DB, IDowner)
             if claimedprikey+bc1[-1] == totalowner:
                 bc1.append(newowner_pk)
+                bc[0] = 10-howmuchbitcoins
                 print 'Transaction accepted'
                 coins = [bc, bc1] 
                 return coins
@@ -81,15 +79,9 @@ class wallet(object):
     #the wallet is already initialized with its keys, as it makes more sense
     def __init__(self):
         self.keys = blockchain().genkey()
-      
-    def sign(self, guess, pubkey):
-        if guess + pubkey  ==  total:
-            answer = 'yes'
-            return answer
-        else :
-            answer = 'no'
-            return answer
-    
+
+
+
     
     #BEGIN
 import numpy as np
@@ -144,7 +136,7 @@ print coins
 # Introduce hash method for chekcing right key
 # clash same values in wallets
 # TO DO: random wallet generation, cheking unique ID of wallets, create comunication between two wallets in transaction, proof-of-work (PoW)
-
+# coin
 
 
 
