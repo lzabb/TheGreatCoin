@@ -31,17 +31,18 @@ class blockchain(object):
     #moved the setting of a =  100 here as it should be a characteristic of the genkey funtion,
    #decoupled from the wallet object
     def genkey(self, blockchain_keys, fn):
-        total = np.random.randint(0,100,1) 
+        total = np.random.randint(1,10000,1) 
         pubkey = np.random.randint(0,total,1)
         prikey = total-pubkey
         keys = {'total': int(total), 'pubkey': int(pubkey), 'prikey': int(prikey)}
         if blockchain_keys == []:
+            blockchain_keys.append(keys)
             return keys
         else:
             answer_from = fn(keys)
             while answer_from == 'collision':
                 print 'Collision: new key generated'
-                total = np.random.randint(1,4,1) 
+                total = np.random.randint(1,10000,1) 
                 pubkey = np.random.randint(0,total,1)
                 prikey = total-pubkey
                 keys = {'total': int(total), 'pubkey': int(pubkey), 'prikey': int(prikey)}
@@ -102,8 +103,8 @@ class blockchain(object):
 
       
 class wallet(object):
-  
-    #the wallet is already initialized with its keys, as it makes more sense
+    # Generating keys/wallets so that each key is unique
+    # the wallet is already initialized with its keys, as it makes more sense
     def __init__(self):
         self.keys = blockchain().genkey(blockchain_keys, database_enquiry)
 
@@ -113,7 +114,11 @@ class wallet(object):
 
 # Module
 def database_enquiry(keys_new):
-        keycheck = [blockchain_keys[0]['total']-keys_new['total'],blockchain_keys[0]['pubkey']-keys_new['pubkey'],blockchain_keys[0]['prikey']-keys_new['prikey']]
+        keycheck = []
+        for k in blockchain_keys:
+            keycheck.append(k['total']-keys_new['total'])
+            keycheck.append(k['pubkey']-keys_new['pubkey'])
+            keycheck.append(k['prikey']-keys_new['prikey'])
         if keycheck.count(0) >= 1:
             return 'collision'
         else:
@@ -128,36 +133,36 @@ import numpy as np
 
 
 b = blockchain()
-
-# Generating keys/wallets so that each key is unique
 blockchain_keys = b.blockchain_keys
-
 bc = b.bc
-w1 = wallet()
-keys1 = w1.keys
-blockchain_keys.append(keys1)
-print blockchain_keys
-w2 = wallet()
-keys2 = w2.keys
-# Check of keys uniquness4
+
+print 'Input how many wallets you want in the economy (do not choose more than 500)' 
+number_of_wallets = raw_input(">")
+number_of_wallets = int(number_of_wallets)
+steps = np.arange(number_of_wallets)
+for steps in steps:
+    w = wallet()
+    keys = w.keys
+    print keys
+    
 print blockchain_keys
 
 # Begining of the transaction from Wallet 1 to Wallet 2
 print 'Assign a bitcoin to Wallet 1'
-bc.append(keys1['pubkey'])
+bc.append(blockchain_keys[0]['pubkey'])
 print bc
-print 'Transaction from Wallet 1 to Wallet 2'
+print 'Transaction from Wallet 1 to another Wallet'
 IDowner= bc[-1]
 print 'Input how much bitcoin you want to transfer? (Allowed (1,2,...,9,10))'
-Howmuchbitcoins=raw_input(">")
-howmuchbitcoins=int(Howmuchbitcoins)
+Howmuchbitcoins = raw_input(">")
+howmuchbitcoins = int(Howmuchbitcoins)
 print 'Input the publickey for the new owner' 
-newowner_pk=raw_input(">")
-newowner_pk=int(newowner_pk)
+newowner_pk = raw_input(">")
+newowner_pk = int(newowner_pk)
 print 'Input the private key for'
 print IDowner
-Claimedprikey=raw_input(">")
-claimedprikey=int(Claimedprikey)
+Claimedprikey = raw_input(">")
+claimedprikey = int(Claimedprikey)
 coins = b.PoW(claimedprikey, bc, blockchain_keys, newowner_pk, howmuchbitcoins)
 print 'Coins in the economy: [0] = amount, [-1] = pk_owner '
 print coins
@@ -166,6 +171,7 @@ print coins
 
 
 # SOME COMMENTS
+# Track wallets balance
 # PoW: need a network and computations that check which bc belongs to who: some ideas: have all wallets denying to have received the bc
 # Introduce hash method for chekcing right key
 # clash same values in wallets
