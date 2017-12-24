@@ -110,14 +110,14 @@ class wallet(object):
         self.keys = blockchain().genkey()
 
 
-class Economies(object):
+class Economies(object): # Plan to introduce different possible generation/interactions for wallets
     
     
     def Wallets_exchange_randomly(self):
-       print 'bo'
+       print 'tbd'
        
     def Wallets_exchange_wrt_utility_functions(self):
-       print 'boo'
+       print 'tbd'
 
 # Module
 def database_enquiry(keys_new):
@@ -145,7 +145,7 @@ b = blockchain()
 blockchain_keys = b.blockchain_keys
 coins = b.coin 
 
-print 'Input how many wallets you want in the economy (do not choose more than 500)' 
+print 'Input how many wallets you want in the economy (choose less thann 500) (each wallet gets assigned 10 bitcoins):' 
 number_of_wallets = raw_input(">")
 number_of_wallets = int(number_of_wallets)
 steps = np.arange(number_of_wallets)
@@ -153,27 +153,28 @@ for steps in steps:
     w = wallet()
     keys = w.keys
     print keys
-print blockchain_keys
+print 'blockchain_keys:', blockchain_keys
 for k in blockchain_keys:
     coinfor_k = [10 , k['pubkey']]
     coins.append(coinfor_k)
-print 'Coins before transaction', coins
+print 'Coins before transaction:', coins
 wallet_transaction = np.random.randint(0,number_of_wallets,1)
 # Begining of the transaction from Wallet_transaction to another Wallet 
-IDowner= coins[wallet_transaction][-1]
-print 'Transaction from the randomly chosen Wallet ',  IDowner, ' to another Wallet'
-print 'Input how much bitcoin you want to transfer?'
+IDowner = coins[wallet_transaction][-1]
+print 'Transaction from the randomly chosen Wallet ',  IDowner, ' to another Wallet.'
+print 'Input how much bitcoin you want to transfer:'
 Howmuchbitcoins = raw_input(">")
 howmuchbitcoins = int(Howmuchbitcoins)
 print 'Input the publickey for the new owner' 
 newowner_pk = raw_input(">")
 newowner_pk = int(newowner_pk)
-print 'Input the private key for'
-print IDowner
+print 'Input the private key for:'
+print 'Wallet:', IDowner
+print  '(suggestion ', blockchain_keys[wallet_transaction]['prikey'],')'
 Claimedprikey = raw_input(">")
 claimedprikey = int(Claimedprikey)
 coins = b.PoW(claimedprikey, coins[wallet_transaction], newowner_pk, howmuchbitcoins)
-print 'Coins after transaction economy: [0] = amount, [-1] = pk_owner '
+print 'Coins after transaction: ([0] = amount, [-1] = pk_owner): '
 print coins
  
 
