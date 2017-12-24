@@ -1,5 +1,12 @@
 # -*- coding: utf-8 -*-
 """
+Created on Sun Dec 24 14:49:06 2017
+
+@author: Mas
+"""
+
+# -*- coding: utf-8 -*-
+"""
 Created on Fri Dec 22 15:58:06 2017
 
 @author: Mas
@@ -18,74 +25,102 @@ class blockchain(object):
     
    
     def __init__(self):
-        self.blockchain_DB = []
+        self.blockchain_keys = []
         self.bc  =  [10]
     
     #moved the setting of a =  100 here as it should be a characteristic of the genkey funtion,
    #decoupled from the wallet object
-    def genkey(self):
+    def genkey(self, blockchain_keys, fn):
         total = np.random.randint(0,100,1) 
         pubkey = np.random.randint(0,total,1)
         prikey = total-pubkey
         keys = {'total': int(total), 'pubkey': int(pubkey), 'prikey': int(prikey)}
-        return keys
-        
-        
-    def PoW(self, claimedprikey, bc, blockchain_DB, newowner_pk, howmuchbitcoins):
-      
-        def check(a, b):
-            for item in a:
-                if item['pubkey'] == b:
-                    return item['total']
-                else:
-                    pass
-            d = item['total']
-            return d
+        if blockchain_keys == []:
+            return keys
+        else:
+            answer_from = fn(keys)
+            while answer_from == 'collision':
+                print 'Collision: new key generated'
+                total = np.random.randint(1,4,1) 
+                pubkey = np.random.randint(0,total,1)
+                prikey = total-pubkey
+                keys = {'total': int(total), 'pubkey': int(pubkey), 'prikey': int(prikey)}
+                answer_from = fn(keys)
+                if answer_from != 'collision':
+                    break
+            return answer_from[-1]
             
-        # New bitcoin created        
-        bc1 = list(bc)
-        bc1[0] = howmuchbitcoins
-        IDowner = bc1[-1] # pubkey=IDwallet
         
-        # Check that newowner_pk is a valid pk (pk's are unique)
-        flat_list_pk = []
-        for w in blockchain_DB:
-            flat_list_pk.append(w['pubkey'])
-        if flat_list_pk.count(newowner_pk) == 1:
-            
-            # Check that claimedprikey is the correct prikey
-            totalowner = check(blockchain_DB, IDowner)
-            if claimedprikey+bc1[-1] == totalowner:
-                bc1.append(newowner_pk)
-                bc[0] = 10-howmuchbitcoins
-                print 'Transaction accepted'
-                coins = [bc, bc1] 
-                return coins
+    def PoW(self, claimedprikey, bc, blockchain_keys, newowner_pk, howmuchbitcoins):
+        if bc[0] < howmuchbitcoins:
+            print 'Insufficient funds'
+        else:
+            def check(a, b):
+                for item in a:
+                    if item['pubkey'] == b:
+                        return item['total']
+                    else:
+                        pass
+                d = item['total']
+                return d
                 
+            # New bitcoin created        
+            bc1 = list(bc)
+            bc1[0] = howmuchbitcoins
+            IDowner = bc1[-1] # pubkey=IDwallet
+            
+            # Check that newowner_pk is a valid pk (pk's are unique)
+            flat_list_pk = []
+            for w in blockchain_keys:
+                flat_list_pk.append(w['pubkey'])
+            if flat_list_pk.count(newowner_pk) == 1:
+                
+                # Check that claimedprikey is the correct prikey
+                totalowner = check(blockchain_keys, IDowner)
+                if claimedprikey+bc1[-1] == totalowner:
+                    bc1.append(newowner_pk)
+                    bc[0] = 10-howmuchbitcoins
+                    print 'Transaction accepted'
+                    coins = [bc, bc1] 
+                    return coins
+                    
+                else:
+                    print ''' 
+                    Your transaction was rejected and unfortunately the reason cannot be disclosed. 
+                    A refund has been issued and should appear in your card statement within a few days. 
+                    We apologize for the inconvenience. 
+                    Actually you just gave us a wrong private key you little piece of mothermary...
+                    '''
+                    coins = [bc]
+                    return coins
+                    
             else:
-                print ''' 
-                Your transaction was rejected and unfortunately the reason cannot be disclosed. 
-                A refund has been issued and should appear in your card statement within a few days. 
-                We apologize for the inconvenience. 
-                Actually you just gave us a wrong private key you little piece of mothermary...
-                '''
+                print 'Public key not valid'
                 coins = [bc]
                 return coins
-                
-        else:
-            print 'Public key not valid'
-            coins = [bc]
-            return coins
-     
+         
 
       
 class wallet(object):
   
     #the wallet is already initialized with its keys, as it makes more sense
     def __init__(self):
-        self.keys = blockchain().genkey()
+        self.keys = blockchain().genkey(blockchain_keys, database_enquiry)
 
 
+
+
+
+# Module
+def database_enquiry(keys_new):
+        keycheck = [blockchain_keys[0]['total']-keys_new['total'],blockchain_keys[0]['pubkey']-keys_new['pubkey'],blockchain_keys[0]['prikey']-keys_new['prikey']]
+        if keycheck.count(0) >= 1:
+            return 'collision'
+        else:
+            blockchain_keys.append(keys_new)
+            return blockchain_keys
+            print keys_new
+            
 
     
     #BEGIN
@@ -95,26 +130,17 @@ import numpy as np
 b = blockchain()
 
 # Generating keys/wallets so that each key is unique
-blockchain_DB = b.blockchain_DB
+blockchain_keys = b.blockchain_keys
+
 bc = b.bc
 w1 = wallet()
 keys1 = w1.keys
-blockchain_DB.append(keys1)
+blockchain_keys.append(keys1)
+print blockchain_keys
 w2 = wallet()
 keys2 = w2.keys
-# Check of keys uniquness
-keycheck = [keys1['total']-keys2['total'],
-            keys1['pubkey']-keys2['pubkey'],
-            keys1['prikey']-keys2['prikey']]
-if keycheck.count(0) >= 1:
-    print 'There was a collsion, new wallet regenerated'
-    w2 = wallet()
-    keys2 = w2.keys
-else:
-    pass
-blockchain_DB.append(keys2)
-print keys1, keys2
-print blockchain_DB
+# Check of keys uniquness4
+print blockchain_keys
 
 # Begining of the transaction from Wallet 1 to Wallet 2
 print 'Assign a bitcoin to Wallet 1'
@@ -132,7 +158,7 @@ print 'Input the private key for'
 print IDowner
 Claimedprikey=raw_input(">")
 claimedprikey=int(Claimedprikey)
-coins = b.PoW(claimedprikey, bc, blockchain_DB, newowner_pk, howmuchbitcoins)
+coins = b.PoW(claimedprikey, bc, blockchain_keys, newowner_pk, howmuchbitcoins)
 print 'Coins in the economy: [0] = amount, [-1] = pk_owner '
 print coins
  
