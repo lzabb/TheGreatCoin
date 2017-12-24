@@ -26,8 +26,7 @@ class blockchain(object):
    
     def __init__(self):
         self.blockchain_keys = []
-        self.bc  =  [10]
-        self.coins = []
+        self.coin = []
     
     #moved the setting of a =  100 here as it should be a characteristic of the genkey funtion,
    #decoupled from the wallet object
@@ -56,6 +55,7 @@ class blockchain(object):
     def PoW(self, claimedprikey, bc, newowner_pk, howmuchbitcoins):
         if bc[0] < howmuchbitcoins:
             print 'Insufficient funds'
+            return coins
         else:
             def check(a, b):
                 for item in a:
@@ -81,7 +81,7 @@ class blockchain(object):
                 totalowner = check(blockchain_keys, IDowner)
                 if claimedprikey+bc1[-1] == totalowner:
                     bc1.append(newowner_pk)
-                    bc[0] = 10-howmuchbitcoins
+                    bc[0] = bc[0] - howmuchbitcoins
                     print 'Transaction accepted'
                     coins.append(bc1) 
                     return coins
@@ -110,8 +110,14 @@ class wallet(object):
         self.keys = blockchain().genkey()
 
 
-
-
+class Economies(object):
+    
+    
+    def Wallets_exchange_randomly(self):
+       print 'bo'
+       
+    def Wallets_exchange_wrt_utility_functions(self):
+       print 'boo'
 
 # Module
 def database_enquiry(keys_new):
@@ -128,6 +134,8 @@ def database_enquiry(keys_new):
             print keys_new
             
 
+
+
     
     #BEGIN
 import numpy as np
@@ -135,9 +143,7 @@ import numpy as np
 
 b = blockchain()
 blockchain_keys = b.blockchain_keys
-bc = b.bc
-coins = b.coins
-coins.append(bc) 
+coins = b.coin 
 
 print 'Input how many wallets you want in the economy (do not choose more than 500)' 
 number_of_wallets = raw_input(">")
@@ -148,14 +154,15 @@ for steps in steps:
     keys = w.keys
     print keys
 print blockchain_keys
-
-# Begining of the transaction from Wallet 1 to another Wallet 
-print 'Assign a bitcoin to Wallet 1'
-bc.append(blockchain_keys[0]['pubkey'])
-print bc
-print 'Transaction from Wallet 1 to another Wallet'
-IDowner= bc[-1]
-print 'Input how much bitcoin you want to transfer? (Allowed (1,2,...,9,10))'
+for k in blockchain_keys:
+    coinfor_k = [10 , k['pubkey']]
+    coins.append(coinfor_k)
+print 'Coins before transaction', coins
+wallet_transaction = np.random.randint(0,number_of_wallets,1)
+# Begining of the transaction from Wallet_transaction to another Wallet 
+IDowner= coins[wallet_transaction][-1]
+print 'Transaction from the randomly chosen Wallet ',  IDowner, ' to another Wallet'
+print 'Input how much bitcoin you want to transfer?'
 Howmuchbitcoins = raw_input(">")
 howmuchbitcoins = int(Howmuchbitcoins)
 print 'Input the publickey for the new owner' 
@@ -165,8 +172,8 @@ print 'Input the private key for'
 print IDowner
 Claimedprikey = raw_input(">")
 claimedprikey = int(Claimedprikey)
-coins = b.PoW(claimedprikey, bc, newowner_pk, howmuchbitcoins)
-print 'Coins in the economy: [0] = amount, [-1] = pk_owner '
+coins = b.PoW(claimedprikey, coins[wallet_transaction], newowner_pk, howmuchbitcoins)
+print 'Coins after transaction economy: [0] = amount, [-1] = pk_owner '
 print coins
  
 
