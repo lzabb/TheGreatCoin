@@ -26,7 +26,7 @@ class blockchain(object):
    
     def __init__(self):
         self.blockchain_keys = []
-        self.coin = []
+        self.coins = []
     
     #moved the setting of a =  100 here as it should be a characteristic of the genkey funtion,
    #decoupled from the wallet object
@@ -143,7 +143,7 @@ import numpy as np
 
 b = blockchain()
 blockchain_keys = b.blockchain_keys
-coins = b.coin 
+coins = b.coins 
 
 print 'Input how many wallets you want in the economy (choose less thann 500) (each wallet gets assigned 10 bitcoins):' 
 number_of_wallets = raw_input(">")
@@ -189,26 +189,3 @@ print coins
 # clash same values in wallets
 # TO DO: random wallet generation, cheking unique ID of wallets, create comunication between two wallets in transaction, proof-of-work (PoW)
 # coin
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
