@@ -1,19 +1,5 @@
 # -*- coding: utf-8 -*-
 """
-Created on Sun Dec 24 14:49:06 2017
-
-@author: Mas
-"""
-
-# -*- coding: utf-8 -*-
-"""
-Created on Fri Dec 22 15:58:06 2017
-
-@author: Mas
-"""
-
-# -*- coding: utf-8 -*-
-"""
 Created on Thu Sep 14 23:49:46 2017
 
 @author: Mas
@@ -31,10 +17,11 @@ class blockchain(object):
     #moved the setting of a =  100 here as it should be a characteristic of the genkey funtion,
    #decoupled from the wallet object
     def genkey(self):
-        total = np.random.randint(1,10000,1) 
-        pubkey = np.random.randint(0,total,1)
-        prikey = total-pubkey
-        keys = {'total': int(total), 'pubkey': int(pubkey), 'prikey': int(prikey)}
+         
+        
+        prikey = ''.join(random.choice('0123456789ABCDEFghij') for i in range(16))
+        pubkey = hash(prikey)
+        keys = {'pubkey': pubkey, 'prikey': prikey}
         if blockchain_keys == []:
             blockchain_keys.append(keys)
             return keys
@@ -44,7 +31,10 @@ class blockchain(object):
                 for k in blockchain_keys:
                     #keycheck.append(k['total']-keys_new['total'])   # Remove these two lines to
                     #keycheck.append(k['prikey']-keys_new['prikey']) # impose uniquness of pubkey only
-                    keycheck.append(k['pubkey']-keys_new['pubkey'])
+                    if k['pubkey'] == keys_new['pubkey']:
+                        keycheck.append(0)
+                    else:
+                        keycheck.append(1)
                 if keycheck.count(0) >= 1:
                     return 'collision'
                 else:
@@ -54,10 +44,9 @@ class blockchain(object):
             answer_from = database_enquiry(keys)
             while answer_from == 'collision':
                 print 'Collision: new key generated'
-                total = np.random.randint(1,10000,1) 
-                pubkey = np.random.randint(0,total,1)
-                prikey = total-pubkey
-                keys = {'total': int(total), 'pubkey': int(pubkey), 'prikey': int(prikey)}
+                prikey = ''.join(random.choice('0123456789ABCDEFghij') for i in range(16))
+                pubkey = hash(prikey)
+                keys = {'pubkey': pubkey, 'prikey': prikey}
                 answer_from = database_enquiry(keys)
                 if answer_from != 'collision':
                     break
@@ -69,14 +58,7 @@ class blockchain(object):
             print 'Insufficient funds'
             return coins
         else:
-            def check(a, b):
-                for item in a:
-                    if item['pubkey'] == b:
-                        return item['total']
-                    else:
-                        pass
-                d = item['total']
-                return d
+           
                 
             # New bitcoin created        
             bc1 = list(bc)
@@ -85,13 +67,15 @@ class blockchain(object):
             
             # Check that newowner_pk is a valid pk (pk's are unique)
             flat_list_pk = []
+            
             for w in blockchain_keys:
-                flat_list_pk.append(w['pubkey'])
-            if flat_list_pk.count(newowner_pk) == 1:
+                flat_list_pk.append(int(w['pubkey']))
+                
+            if flat_list_pk.count(int(newowner_pk)) == 1:
                 
                 # Check that claimedprikey is the correct prikey
-                totalowner = check(blockchain_keys, IDowner)
-                if claimedprikey+bc1[-1] == totalowner:
+                #prikey_owner = check(blockchain_keys, IDowner) KEYMOMENT WHERE NO NEED FOR A PRIKEY DATABASE IS NEEDED
+                if hash(claimedprikey) == IDowner:
                     # Work
                     start = time.time()
                     answer = np.random.randint(0,10000,1)
@@ -106,11 +90,11 @@ class blockchain(object):
                             break
                     end = time.time()
                     elapsed = end - start
-                    print 'Time worked by node ... :', elapsed
+                    print 'Time worked by node ZERO :', elapsed
                     bc1.append(newowner_pk)
                     bc1.append(elapsed)
                     bc[0] = bc[0] - howmuchbitcoins
-                    print 'Transaction accepted by node', 
+                    print 'Transaction accepted by node ZERO', 
                     coins.append(bc1) 
                     print bc1
                     return coins
@@ -135,14 +119,7 @@ class blockchain(object):
             print 'Insufficient funds'
             return coins
         else:
-            def check(a, b):
-                for item in a:
-                    if item['pubkey'] == b:
-                        return item['total']
-                    else:
-                        pass
-                d = item['total']
-                return d
+            
                 
             # New bitcoin created        
             block = list(bc)
@@ -152,17 +129,18 @@ class blockchain(object):
             # Check that newowner_pk is a valid pk (pk's are unique)
             flat_list_pk = []
             for w in blockchain_keys:
-                flat_list_pk.append(w['pubkey'])
-            if flat_list_pk.count(newowner_pk) == 1:
+                flat_list_pk.append(int(w['pubkey']))
+                
+            if flat_list_pk.count(int(newowner_pk)) == 1:
                 
                 # Check that claimedprikey is the correct prikey
-                totalowner = check(blockchain_keys, IDowner)
-                if claimedprikey+block[1] == totalowner:
-                    # Work
+                #prikey_owner = check(blockchain_keys, IDowner) KEYMOMENT WHERE NO NEED FOR A PRIKEY DATABASE IS NEEDED
+                if hash(claimedprikey) == IDowner:
+                    # work
                     start = time.time()
                     answer = np.random.randint(0,10000,1)
                     answer = int(answer) 
-                    print answer
+                    
                     while answer != 0:
                         
                         b = np.random.randint(0,10000,1)  
@@ -172,15 +150,15 @@ class blockchain(object):
                             break
                     end = time.time()
                     elapsed = end - start
-                    print 'Time worked by node ... :', elapsed
+                    print 'Time worked by node ZERO :', elapsed,'.'
                     block.append(newowner_pk)
                     block.append(elapsed)
                     block.append('start')
                     
                     
-                    print 'Transaction accepted by node', 
+                    print 'Transaction accepted by node ZERO .', 
                     coins.append(block) 
-                    print block
+                    print 'Block:', block
                     return coins
                     
                 else:
@@ -205,14 +183,7 @@ class blockchain(object):
             block.append('Denied')
             return block
         else:
-            def check(a, b):
-                for item in a:
-                    if item['pubkey'] == b:
-                        return item['total']
-                    else:
-                        pass
-                d = item['total']
-                return d
+            
                 
             # New bitcoin created        
             
@@ -220,18 +191,22 @@ class blockchain(object):
             
             # Check that newowner_pk is a valid pk (pk's are unique)
             flat_list_pk = []
+            
             for w in blockchain_keys:
-                flat_list_pk.append(w['pubkey'])
-            if flat_list_pk.count(newowner_pk) == 1:
+                flat_list_pk.append(int(w['pubkey']))
+                
+            if flat_list_pk.count(int(newowner_pk)) == 1:
                 
                 # Check that claimedprikey is the correct prikey
-                totalowner = check(blockchain_keys, IDowner)
-                if claimedprikey+block[1] == totalowner:
-                    # Work
+                #prikey_owner = check(blockchain_keys, IDowner) KEYMOMENT WHERE NO NEED FOR A PRIKEY DATABASE IS NEEDED
+                if hash(claimedprikey) == IDowner:
+             
+               
+                    # Work: exexute operation with probability of success of 10^{-5}
                     start = time.time()
                     answer = np.random.randint(0,10000,1)
                     answer = int(answer) 
-                    print answer
+                    
                     while answer != 0:
                         
                         b = np.random.randint(0,10000,1)  
@@ -241,15 +216,15 @@ class blockchain(object):
                             break
                     end = time.time()
                     elapsed = end - start
-                    print 'Time worked by node ', k['pubkey'],':', elapsed
+                    print 'Time worked by node ', k['pubkey'],':', elapsed,'.'
                     
                     block.append(elapsed)
                     block.append(k['pubkey'])
                     nodeswork.append([k['pubkey'],elapsed])
                     
-                    print 'Transaction accepted by node', k['pubkey']
+                    print 'Transaction accepted by node', k['pubkey'],'.'
                      
-                    print 'Updated block:', block
+                    print 'Block updated.', #block
                     return block
                     
                 else:
@@ -306,12 +281,12 @@ class economies(object): # Plan to introduce different possible generation/inter
         howmuchbitcoins = int(Howmuchbitcoins)
         print 'Input the publickey for the new owner' 
         newowner_pk = raw_input(">")
-        newowner_pk = int(newowner_pk)
+        #newowner_pk = int(newowner_pk)
         print 'Input the private key for:'
         print 'Wallet:', IDowner
         print  '(suggestion ', blockchain_keys[int(wallet_transaction)]['prikey'],')'
-        Claimedprikey = raw_input(">")
-        claimedprikey = int(Claimedprikey)
+        claimedprikey = raw_input(">")
+        #claimedprikey = int(claimedprikey)
         b.PoW(claimedprikey, coins[int(wallet_transaction)], newowner_pk, howmuchbitcoins)
         print 'Coins after transaction: ([0] = amount, [-1] = pk_owner): '
         print coins
@@ -354,8 +329,8 @@ class economies(object): # Plan to introduce different possible generation/inter
         print 'Input the private key for:'
         print 'Wallet:', IDowner
         print  '(suggestion ', blockchain_keys[int(wallet_transaction)]['prikey'],')'
-        Claimedprikey = raw_input(">")
-        claimedprikey = int(Claimedprikey)
+        claimedprikey = raw_input(">")
+        #claimedprikey = int(claimedprikey)
         b.PoW_1stblock(claimedprikey, coins[int(wallet_transaction)], newowner_pk, howmuchbitcoins)
         print 'Coins after transaction: ([0] = amount, [-1] = pk_owner): '
         print coins
@@ -384,7 +359,7 @@ class stats(object):
                         pass
                     else:
                         tot_work = tot_work + block[l]
-            print 'Total time worked on the block:', tot_work
+            print 'Total time worked on the block:', tot_work,'.'
             
             ma= max(nodeswork, key=lambda item: item[1])
             mi = min(nodeswork, key=lambda item: item[1])
@@ -394,8 +369,8 @@ class stats(object):
                     pass
                 else:
                     'not max'
-            print 'Maximum work (the node in [0]):', ma
-            print 'Minimum work (the node in [0]):', mi
+            print 'Maximum work (the node in [0]):', ma,'.'
+            print 'Minimum work (the node in [0]):', mi,'.'
             
             av = tot_work / len(nodeswork)
             v = []
@@ -403,13 +378,14 @@ class stats(object):
                 v.append((i[1]-av)*(i[1]-av)/len(nodeswork))
             sd = math.sqrt(sum(v))
             sd_normaliser = max([ma[1] - av, av - mi[1]])
-            print 'Average and standard deviation of work:', av,', ', sd
+            print 'Average of work:', av,'.'
+            print 'Standard deviation of work:', sd,'.'
             if sd_normaliser != 0:
                 nsd = sd / sd_normaliser
-                print 'Normalised standard deviation: ', nsd
+                print 'Normalised standard deviation of work: ', nsd,'.'
             else: pass
         else:
-            print 'No stats'
+            print 'No stats.'
 
             
 
@@ -420,25 +396,22 @@ class stats(object):
 import numpy as np
 import time
 import math
+import random
 
 b = blockchain()
 blockchain_keys = b.blockchain_keys
 coins = b.coins 
-
-# Chose the economic model
 e = economies()
 #output = e.Wnum_randWowner_detWrecepient_1tr_detbc()
-output = e.Wnum_auto1tr_ran()
+output = e.Wnum_auto1tr_ran() #first automatic transaction (only imput privatekey) and block is generated
 block = output[0]
 claimedprikey =  output[1]
 bc =  output[2]
 newowner_pk =  output[3]
 howmuchbitcoins =  output[4]
 nodeswork = output[5]
-block = e.nodes_work()
-stats()
-       
-        
+block = e.nodes_work() # the block is updated as nodes (same as wallets) confirm the transaction going through work
+stats()       
         
      
     
@@ -446,10 +419,4 @@ stats()
 
 # SOME COMMENTS
 # Track wallets balance
-# Assign bitcoins to wallets
-# impose only public keys to be different
-# PoW: need a network and computations that check which bc belongs to who: some ideas: have all wallets denying to have received the bc
-# Introduce hash method for chekcing right key
-# clash same values in wallets
-# TO DO: random wallet generation, cheking unique ID of wallets, create comunication between two wallets in transaction, proof-of-work (PoW)
-# coin
+# TO DO:  create comunication between two wallets in transaction (utility functions), proof-of-work (PoW)
