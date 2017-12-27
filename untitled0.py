@@ -1,5 +1,26 @@
 # -*- coding: utf-8 -*-
 """
+Created on Tue Dec 26 20:22:06 2017
+
+@author: Mas
+"""
+
+# -*- coding: utf-8 -*-
+"""
+Created on Sun Dec 24 14:49:06 2017
+
+@author: Mas
+"""
+
+# -*- coding: utf-8 -*-
+"""
+Created on Fri Dec 22 15:58:06 2017
+
+@author: Mas
+"""
+
+# -*- coding: utf-8 -*-
+"""
 Created on Thu Sep 14 23:49:46 2017
 
 @author: Mas
@@ -153,7 +174,7 @@ class blockchain(object):
                     print 'Time worked by node ZERO :', elapsed,'.'
                     block.append(newowner_pk)
                     block.append(elapsed)
-                    block.append('start')
+                    block.append('block start')
                     
                     
                     print 'Transaction accepted by node ZERO .', 
@@ -229,10 +250,7 @@ class blockchain(object):
                     
                 else:
                     print ''' 
-                    Your transaction was rejected and unfortunately the reason cannot be disclosed. 
-                    A refund has been issued and should appear in your card statement within a few days. 
-                    We apologize for the inconvenience. 
-                    Actually you just gave us a wrong private key you little piece of mothermary...
+                    Invalid private key you little piece of mothermary...
                     '''
                     
                     block.append('Denied')
@@ -275,7 +293,8 @@ class economies(object): # Plan to introduce different possible generation/inter
         wallet_transaction = np.random.randint(0,number_of_wallets,1)
         # Begining of the transaction from Wallet_transaction to another Wallet 
         IDowner = coins[int(wallet_transaction)][-1]
-        print 'Transaction from the randomly chosen Wallet ',  IDowner, ' to another Wallet.'
+        print '-------------BEGINING OF TRANSACTION--------------'
+        print 'Transaction from the randomly chosen Wallet: pubkey =',  IDowner, '.'
         print 'Input how much bitcoin you want to transfer:'
         Howmuchbitcoins = raw_input(">")
         howmuchbitcoins = int(Howmuchbitcoins)
@@ -296,6 +315,7 @@ class economies(object): # Plan to introduce different possible generation/inter
        
        #need to input previous valued that input in previous function, then run PoW   
        #nodes creation for each
+       print '-------------BEGINING OF VOTING/WORK ON BLOCK--------------'
        for k in blockchain_keys:
            Block = b.PoW_on_block(claimedprikey, bc, newowner_pk, howmuchbitcoins,k)
          
@@ -303,6 +323,7 @@ class economies(object): # Plan to introduce different possible generation/inter
        return block
 
     def Wnum_auto1tr_ran(self):
+        print '---------------------------'
         print 'Input how many wallets you want in the economy (choose less thann 500) (each wallet gets assigned 10 bitcoins):' 
         number_of_wallets = raw_input(">")
         number_of_wallets = int(number_of_wallets)
@@ -319,13 +340,17 @@ class economies(object): # Plan to introduce different possible generation/inter
         wallet_transaction = np.random.randint(0,number_of_wallets,1)
         # Begining of the transaction from Wallet_transaction to another Wallet 
         IDowner = coins[int(wallet_transaction)][-1]
-        print 'Transaction from the randomly chosen Wallet ',  IDowner, ' to another Wallet.'
-        print 'Input how much bitcoin you want to transfer:'
+        print '-------------BEGINING OF TRANSACTION AND BLOCK CREATION--------------'
+        print 'Transaction from the randomly chosen Wallet: pubkey =',  IDowner, '.'
+        #print 'Input how much bitcoin you want to transfer:'
         Howmuchbitcoins = np.random.randint(1,9,1)
         howmuchbitcoins = int(Howmuchbitcoins)
-        print 'Input the publickey for the new owner' 
+        print 'Randomly chosen amount to transfer:',howmuchbitcoins,'.'
+
+        #print 'Input the publickey for the new owner' 
         newowner_pk = np.random.randint(0,number_of_wallets,1)
         newowner_pk = blockchain_keys[newowner_pk]['pubkey']
+        print 'Randomly chosen recipient: publickey =',newowner_pk,'.'
         print 'Input the private key for:'
         print 'Wallet:', IDowner
         print  '(suggestion ', blockchain_keys[int(wallet_transaction)]['prikey'],')'
@@ -411,6 +436,7 @@ newowner_pk =  output[3]
 howmuchbitcoins =  output[4]
 nodeswork = output[5]
 block = e.nodes_work() # the block is updated as nodes (same as wallets) confirm the transaction going through work
+print '-------------STATS-------------'
 stats()       
         
      
