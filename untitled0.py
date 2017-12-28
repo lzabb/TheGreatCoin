@@ -349,7 +349,7 @@ class economies(object): # Plan to introduce different possible generation/inter
 
         #print 'Input the publickey for the new owner' 
         newowner_pk = np.random.randint(0,number_of_wallets,1)
-        newowner_pk = blockchain_keys[newowner_pk]['pubkey']
+        newowner_pk = blockchain_keys[int(newowner_pk)]['pubkey']
         print 'Randomly chosen recipient: publickey =',newowner_pk,'.'
         print 'Input the private key for:'
         print 'Wallet:', IDowner
