@@ -1,31 +1,9 @@
 # -*- coding: utf-8 -*-
 """
-Created on Tue Dec 26 20:22:06 2017
-
-@author: Mas
-"""
-
-# -*- coding: utf-8 -*-
-"""
-Created on Sun Dec 24 14:49:06 2017
-
-@author: Mas
-"""
-
-# -*- coding: utf-8 -*-
-"""
-Created on Fri Dec 22 15:58:06 2017
-
-@author: Mas
-"""
-
-# -*- coding: utf-8 -*-
-"""
 Created on Thu Sep 14 23:49:46 2017
 
 @author: Mas
 """
-
 
 
 class blockchain(object):
@@ -140,8 +118,7 @@ class blockchain(object):
             print 'Insufficient funds'
             return coins
         else:
-            
-                
+              
             # New bitcoin created        
             block = list(bc)
             block[0] = howmuchbitcoins
